@@ -1,0 +1,15 @@
+{
+    "live": {
+        "host": "",
+        "port": 21,
+        "username": "",
+        "password": ""
+    },
+
+    "staging": {
+        "host": "",
+        "port": 21,
+        "username": "",
+        "password": ""
+    }
+}

@@ -1,0 +1,43 @@
+/*
+Theme Name: Boilerplate
+Version: 1.0.0
+Text Domain: boilerplate
+
+Copyright (c) 2015 by Company
+*/
+
+
+
+
+/*
+|----------------------------------------------------------
+| Images
+|----------------------------------------------------------
+|
+| from https://codex.wordpress.org/Styling_Images_in_Posts_and_Pages
+|
+*/
+img                 { max-width: 100%; height: auto; }
+img.alignright      { float:right; margin:0 0 1em 1em; }
+img.alignleft       { float:left; margin:0 1em 1em 0; }
+img.aligncenter     { display: block; margin-left: auto; margin-right: auto; }
+a img.alignright    { float:right; margin:0 0 1em 1em; }
+a img.alignleft     { float:left; margin:0 1em 1em 0; }
+a img.aligncenter   { display: block; margin-left: auto; margin-right: auto; }
+
+
+/*
+|----------------------------------------------------------
+| Image Captions
+|----------------------------------------------------------
+*/
+.wp-caption-text    { color: #999; font-size: 12px; }
+.wp-caption.alignright {
+    float: right;
+}
+.wp-caption.alignleft {
+    float: left;
+}
+.wp-caption .wp-caption-text {
+    text-align: center;
+}

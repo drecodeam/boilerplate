@@ -105,10 +105,7 @@ module.exports = function(grunt) {
                     'Gruntfile.js',
                     'package.json'
                 ],
-                tasks: ['default'],
-                options: {
-                    livereload: true
-                }
+                tasks: ['default']
             },
 
             // BOWER COMPONENTS
@@ -116,10 +113,7 @@ module.exports = function(grunt) {
                 files: [
                     'bower.json'
                 ],
-                tasks: ['shell', 'bower_concat'],
-                options: {
-                    livereload: true
-                }
+                tasks: ['shell', 'bower_concat']
             },
 
             // STYLESHEETS
@@ -127,10 +121,7 @@ module.exports = function(grunt) {
                 files: [
                     'assets/stylesheets/*.{scss,sass}'
                 ],
-                tasks: ['scsslint', 'concat:sass', 'sass'],
-                options: {
-                    livereload: true
-                }
+                tasks: ['scsslint', 'concat:sass', 'sass']
             },
 
             // JS FILES
@@ -138,7 +129,23 @@ module.exports = function(grunt) {
                 files: [
                     'assets/javascripts/*.js'
                 ],
-                tasks: ['jscs', 'concat:js', 'jshint'],
+                tasks: ['jscs', 'concat:js', 'jshint']
+            },
+
+            // CSS FILES
+            css: {
+                files: [
+                    'style.css'
+                ],
+                tasks: ['csslint']
+            },
+
+            // LIVERELOAD
+            livereload: {
+                files: [
+                    'dist/*',
+                    'style.css'
+                ],
                 options: {
                     livereload: true
                 }

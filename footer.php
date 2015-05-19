@@ -1,8 +1,6 @@
-    <div class="row">
-        <div class="large-12 text-center">
-            <hr>
-            (c) 2015 by XYZ
-        </div>
+    <div class="container text-center text-muted">
+        <hr>
+        <small>&copy; <?php echo bloginfo('name'); ?></small>
     </div>
 
     <?php wp_footer(); ?>

@@ -1,0 +1,8 @@
+{
+    "camelcase": true,
+    "curly":    true,
+    "eqeqeq":   true,
+    "indent":   4,
+    "strict":   true,
+    "undef":    true
+}

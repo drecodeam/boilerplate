@@ -18,7 +18,7 @@ $plugin_dependencies    = array(
 | Includes
 |----------------------------------------------------------
 */
-require_once 'libs/FoundationMenuWalker.php';
+require_once 'libs/BootstrapMenuWalker.php';
 require_once 'libs/vendor/TGMPluginActivation.php';
 
 
@@ -72,6 +72,8 @@ add_action('tgmpa_register', 'register_plugin_dependencies');
 | Theme setup
 |----------------------------------------------------------
 */
+// Bootstrap nav walker
+add_action('after_setup_theme', 'bootstrap_setup');
 function theme_setup() {
     // Content width
     global $content_width;

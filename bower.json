@@ -1,6 +1,6 @@
 {
   "name": "boilerplate",
   "dependencies": {
-    "foundation": "~5.5.1"
+    "bootstrap": "~3.3.4"
   }
 }

@@ -161,8 +161,6 @@ module.exports = function(grunt) {
         | Package manager
         |
         */
-        // Grunt bower task caused some bugs when it comes to Foundation,
-        // so we'll install dependencies via shell.
         shell: {
             options: {
                 stdout: true,
@@ -439,6 +437,22 @@ module.exports = function(grunt) {
                     }
                 ]
             }
+        },
+
+        /*
+        |----------------------------------------------------------
+        | Parker
+        |----------------------------------------------------------
+        */
+        parker: {
+            options: {
+                file: "parker.md"
+            },
+            src: [
+                'dist/*.css',
+                '*.css',
+                '!dist/vendor.css'
+            ]
         }
     });
 
@@ -493,7 +507,8 @@ module.exports = function(grunt) {
         'jscs',
         'concat:js',
         'jshint',
-        'clean:tmp'
+        'clean:tmp',
+        'parker'
     ]);
 
     // ### Build a release version of the theme

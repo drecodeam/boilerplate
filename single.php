@@ -2,30 +2,26 @@
 get_header();
 ?>
 
-<div class="row">
-    <div class="large-12">
-        <?php
-        while(have_posts()): the_post();
-        ?>
+<div class="container">
+    <?php
+    while(have_posts()): the_post();
+    ?>
 
-        <h2><?php the_title(); ?></h2>
-        <?php the_content(); ?>
+    <h2><?php the_title(); ?></h2>
+    <?php the_content(); ?>
 
-        <hr>
+    <hr>
 
-        <?php
-        // Comments
-        if(comments_open() || get_comments_number() != '0') {
-            comments_template();
-        }
-        ?>
+    <?php
+    // Comments
+    if(comments_open() || get_comments_number() != '0') {
+        comments_template();
+    }
+    ?>
 
-        <hr>
-
-        <?php
-        endwhile;
-        ?>
-    </div>
+    <?php
+    endwhile;
+    ?>
 </div>
 
 <?php

@@ -1,0 +1,11 @@
+linters:
+    BangFormat:
+        enabled: true
+        space_before_bang: true
+        space_after_bang: false
+
+    Indentation:
+        enabled: true
+        allow_non_nested_indentation: false
+        character: space
+        width: 4

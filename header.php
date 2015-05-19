@@ -16,28 +16,35 @@
     </head>
 
     <body <?php body_class(); ?>>
-        <div class="contain-to-grid">
-            <nav class="top-bar" data-topbar role="navigation">
-                <ul class="title-area">
-                    <li class="name">
-                        <h1>
-                            <a href="<?php echo get_bloginfo('url');  ?>">
-                                Boilerplate
-                            </a>
-                        </h1>
-                    </li>
-                    <li class="toggle-topbar menu-icon"><a href="#"><span>menu</span></a></li>
-                </ul>
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <!-- Nav button for small resolutions -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-menu">
+                        <span class="sr-only"><?php _e('Toggle navigation', 'boilerplate'); ?></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
 
-                <section class="top-bar-section right">
+                    <a class="navbar-brand" href="<?php echo get_home_url(); ?>"><?php bloginfo('name'); ?></a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
                     <?php
-                    wp_nav_menu(array(
-                        'menu'              => 'primary',
-                        'items_wrap'        => '<ul id="%1$s" class="%2$s">%3$s</ul>',
-                        'depth'             => 1,
-                        'container'         => false
-                    ));
+                    // Navigation
+                    $gitsta_nav_args = array(
+                        'theme_location' => 'top-bar',
+                        'menu'           => 'primary',
+                        'container'      => false,
+                        'menu_class'     => 'nav navbar-nav',
+                        'walker'         => new wp_bootstrap_navwalker(),
+                        'fallback_cb'    => 'wp_bootstrap_navwalker::fallback',
+                    );
+                    wp_nav_menu($gitsta_nav_args);
+
+                    // see searchform.php
+                    get_search_form();
                     ?>
-                </section>
-            </nav>
-        </div>
+                </div>
+            </div>
+        </nav>

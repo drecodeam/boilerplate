@@ -6,7 +6,7 @@
 */
 $content_width          = 1000;
 $theme_support          = array(
-    'post-thumbnails' => array()
+    'post-thumbnails'   => array()
 );
 $plugin_dependencies    = array(
 
@@ -27,8 +27,19 @@ require_once 'libs/vendor/TGMPluginActivation.php';
 | Scripts und stylesheets
 |----------------------------------------------------------
 */
+function asset_path($dir = '') {
+    $path = '/';
+    if(locate_template('tmp')) {
+        $path .= 'tmp/';
+    }
+    $path .= 'assets/';
+    $path .= $dir . '/';
+
+    return $path;
+}
+
 function enqueue_scripts() {
-    $path = get_template_directory_uri() . '/dist';
+    /*$path = get_template_directory_uri() . '/dist';
 
     if( ! locate_template('dist/release.css')) {
         // Include vendor styles
@@ -50,6 +61,22 @@ function enqueue_scripts() {
     } else {
         wp_enqueue_script('release', $path . '/release.js');
     }
+    wp_enqueue_style('vendor', asset_path() . 'vendor/vendor.css'); */
+
+    $vendor_css = get_template_directory_uri() . asset_path('vendor') . 'vendor.css';
+    $vendor_js  = get_template_directory_uri() . asset_path('vendor') . 'vendor.js';
+
+    if(locate_template(asset_path() . 'vendor/vendor.css'))
+        wp_enqueue_style('vendor', $vendor_css);
+    wp_enqueue_script('vendor', $vendor_js);
+
+    wp_enqueue_style('additional', get_template_directory_uri() . asset_path() . 'stylesheets/additional.css');
+    wp_enqueue_script('main', get_template_directory_uri() . asset_path() . 'javascripts/main.js');
+
+    //locate_template($vendor_css) ? wp_enqueue_style('vendor', $vendor_css) : null;
+    //locate_template($vendor_js) ? wp_enqueue_script('vendor', $vendor_js) : null;
+
+    wp_enqueue_style('styles', get_stylesheet_uri());
 }
 add_action('wp_enqueue_scripts', 'enqueue_scripts');
 

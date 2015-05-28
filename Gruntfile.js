@@ -4,6 +4,12 @@
 // be truly satisfied is to do what you believe is great work. And the only way
 // to do great work is to love what you do." - Steve Jobs
 
+/* jshint ignore:start */
+
+// TODO Add imgmin
+// TODO Add autoprefix
+// TODO Add brower sync
+
 "use strict";
 
 // Global configurations
@@ -11,7 +17,7 @@
 var config = {
     ftp_exclusion : [
         '.sass-cache', '.git', 'bower_components', 'node_modules', '.csslintrc',
-        '.ftpsrv.json', '.gitignore', '.jscsrc', '.jshintrc', '.scss-lint.yml',
+        '.ftpsrv.json', '.gitignore', '.jshintrc', '.scss-lint.yml',
         'bower.json', 'readme.md', 'Gruntfile.js', '.DS_Store', '._*',
         'Spotlight-V100', '.Trashes', 'Thumbs.db', 'npm-debug.log', '.settings',
         'nbproject', 'package.json', 'assets/stylesheets', 'assets/tmp',
@@ -23,7 +29,6 @@ var config = {
 var path        = require('path');
 
 module.exports = function(grunt) {
-
     // ### Get theme information
     //
     // TODO: I'm pretty sure that there's a faster and more elegant way
@@ -92,7 +97,8 @@ module.exports = function(grunt) {
             // PHP Files
             php: {
                 files: [
-                    '*.php'
+                    '*.php',
+                    'templates/*.php'
                 ],
                 options: {
                     livereload: true
@@ -113,15 +119,15 @@ module.exports = function(grunt) {
                 files: [
                     'bower.json'
                 ],
-                tasks: ['shell', 'bower_concat']
+                tasks: ['shell:bower_prune', 'shell:bower', 'bower_concat']
             },
 
-            // STYLESHEETS
+            // SASS
             sass: {
                 files: [
-                    'assets/stylesheets/*.{scss,sass}'
+                    'assets/sass/*.{scss,sass}'
                 ],
-                tasks: ['scsslint', 'concat:sass', 'sass']
+                tasks: ['scsslint', 'sass']
             },
 
             // JS FILES
@@ -129,7 +135,7 @@ module.exports = function(grunt) {
                 files: [
                     'assets/javascripts/*.js'
                 ],
-                tasks: ['jscs', 'concat:js', 'jshint']
+                tasks: ['', 'concat:js', 'jshint']
             },
 
             // CSS FILES
@@ -143,7 +149,8 @@ module.exports = function(grunt) {
             // LIVERELOAD
             livereload: {
                 files: [
-                    'dist/*',
+                    'tmp/*.css',
+                    'tmp/*.js',
                     'style.css'
                 ],
                 options: {
@@ -168,14 +175,17 @@ module.exports = function(grunt) {
             },
             bower: {
                 command: path.resolve(process.cwd() + '/node_modules/.bin/bower --allow-root install')
+            },
+            bower_prune: {
+                command: path.resolve(process.cwd() + '/node_modules/.bin/bower prune')
             }
         },
 
         // Concatenation of bower components
         bower_concat: {
             all: {
-                dest: 'dist/vendor.js',
-                cssDest: 'dist/vendor.css'
+                dest: 'tmp/assets/vendor/vendor.js',
+                cssDest: 'tmp/assets/vendor/vendor.css'
             }
         },
 
@@ -194,7 +204,7 @@ module.exports = function(grunt) {
                     sourcemap: 'none'
                 },
                 files: {
-                    'dist/additional.css': 'assets/tmp/concatenated.scss'
+                    'tmp/assets/stylesheets/additional.css': 'assets/sass/base.scss'
                 }
             }
         },
@@ -207,7 +217,7 @@ module.exports = function(grunt) {
         */
         scsslint: {
             allFiles: [
-                'assets/stylesheets/*.scss'
+                'assets/sass/*.{scss,sass}'
             ]
         },
 
@@ -234,14 +244,9 @@ module.exports = function(grunt) {
         |----------------------------------------------------------
         */
         concat: {
-            sass: {
-                src: ['assets/stylesheets/*.scss'],
-                dest: 'assets/tmp/concatenated.scss'
-            },
-
             js: {
                 src: ['assets/javascripts/*.js'],
-                dest: 'dist/main.js'
+                dest: 'tmp/assets/javascripts/main.js'
             }
         },
 
@@ -252,17 +257,7 @@ module.exports = function(grunt) {
         |----------------------------------------------------------
         */
         jshint: {
-            dist: ['dist/main.js']
-        },
-
-
-        /*
-        |----------------------------------------------------------
-        | JS Check Style (JSCS)
-        |----------------------------------------------------------
-        */
-        jscs: {
-            src: 'assets/javascripts/*.js'
+            dist: ['tmp/assets/javascripts/main.js']
         },
 
 
@@ -276,21 +271,52 @@ module.exports = function(grunt) {
                 src: ['dist/*.css', '!dist/vendor.css']
             },
 
-            initial: {
-                src: [
-                    'dist/*',
-                    '!dist/.gitkeep',
-                    'assets/tmp/*',
-                    '!assets/tmp/.gitkeep'
-                ]
-            },
-
             tmp: {
-                src: ['assets/tmp/*', '!assets/tmp/.gitkeep']
+                src: [
+                    '!tmp/.gitignore',
+                    'tmp/assets/*',
+                    'tmp/*'
+                ]
             },
 
             nonreleasefiles: {
                 src: ['dist/*', '!dist/release.css', '!dist/release.js']
+            }
+        },
+
+        copy: {
+            dist: {
+                files: [{
+                    src: [
+                        '*.php',
+                        'templates/*.php',
+                        'readme.md',
+                        'readme.txt',
+                        'license',
+                        'screenshot.png',
+                        'style.css',
+                        'assets/**/*',
+                        'libs/**/*'
+                    ],
+                    dest: 'dist/',
+                    cwd: 'dist'
+                }]
+            },
+
+            icons: {
+                files: [{
+                    expand: true,
+                    dot: true,
+                    cwd: 'bower_components/bootstrap/dist/fonts',
+                    src: ['*.*'],
+                    dest: 'assets/fonts'
+                }, {
+                    expand: true,
+                    dot: true,
+                    cwd: 'bower_components/font-awesome/fonts',
+                    src: ['*.*'],
+                    dest: 'assets/fonts'
+                }]
             }
         },
 
@@ -453,6 +479,16 @@ module.exports = function(grunt) {
                 '*.css',
                 '!dist/vendor.css'
             ]
+        },
+
+        docker: {
+            app: {
+                src: [
+                    'assets/**/*',
+                    '*.php'
+                ],
+                dest: 'docs'
+            }
         }
     });
 
@@ -469,6 +505,21 @@ module.exports = function(grunt) {
     | Tasks
     |----------------------------------------------------------
     */
+
+    grunt.registerTask('init', [
+        'clean:tmp',
+
+        'shell:bower_prune',
+        'shell:bower',
+        'bower_concat',
+
+        'csslint',
+        'scsslint',
+        'sass',
+
+        'concat:js',
+        'jshint'
+    ]);
 
     // ### Zip the theme
     //
@@ -496,20 +547,9 @@ module.exports = function(grunt) {
     // 4. Lint and compile SASS
     // 5. Lint and concat JS
     // 6. Clean tmp directory
-    grunt.registerTask('build', [
-        'clean:initial',
-        'shell',
-        'bower_concat',
-        'csslint',
-        'concat:sass',
-        'scsslint',
-        'sass',
-        'jscs',
-        'concat:js',
-        'jshint',
-        'clean:tmp',
-        'parker'
-    ]);
+    var buildTasks = [];
+    buildTasks.push('watch');
+    grunt.registerTask('build', buildTasks);
 
     // ### Build a release version of the theme
     //
@@ -532,7 +572,6 @@ module.exports = function(grunt) {
     grunt.registerTask('validate', [
         'csslint',
         'scsslint',
-        'jscs',
         'jshint'
     ]);
 

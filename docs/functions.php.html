@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>functions.php</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="doc-style.css" />
+  <script src="doc-filelist.js"></script>
+  <script>
+    var relativeDir = "", thisFile = "functions.php", defaultSidebar = true;
+  </script>
+  <script src="doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>functions.php</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1">&#182;</a>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+</div>
+<div class="dox">
+  <div class="summary"><p>|----------------------------------------------------------
+| Global configuration
+|----------------------------------------------------------</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nv">$content_width</span>          <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>
+<span class="nv">$theme_support</span>          <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+    <span class="s1">&#39;post-thumbnails&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">()</span>
+<span class="p">);</span>
+<span class="nv">$plugin_dependencies</span>    <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+
+<span class="p">);</span>
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<div class="dox">
+  <div class="summary"><p>|----------------------------------------------------------
+| Includes
+|----------------------------------------------------------</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="k">require_once</span> <span class="s1">&#39;libs/BootstrapMenuWalker.php&#39;</span><span class="p">;</span>
+<span class="k">require_once</span> <span class="s1">&#39;libs/vendor/TGMPluginActivation.php&#39;</span><span class="p">;</span>
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<div class="dox">
+  <div class="summary"><p>|----------------------------------------------------------
+| Scripts und stylesheets
+|----------------------------------------------------------</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="k">function</span> <span class="nf">enqueue_scripts</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nv">$path</span> <span class="o">=</span> <span class="nx">get_template_directory_uri</span><span class="p">()</span> <span class="o">.</span> <span class="s1">&#39;/dist&#39;</span><span class="p">;</span>
+
+    <span class="k">if</span><span class="p">(</span> <span class="o">!</span> <span class="nx">locate_template</span><span class="p">(</span><span class="s1">&#39;dist/release.css&#39;</span><span class="p">))</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+</div>
+<p>Include vendor styles</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">wp_enqueue_style</span><span class="p">(</span><span class="s1">&#39;vendor&#39;</span><span class="p">,</span> <span class="nv">$path</span> <span class="o">.</span> <span class="s1">&#39;/vendor.css&#39;</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+</div>
+<p>Include theme style</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">wp_enqueue_style</span><span class="p">(</span><span class="s1">&#39;additional&#39;</span><span class="p">,</span> <span class="nv">$path</span> <span class="o">.</span> <span class="s1">&#39;/additional.css&#39;</span><span class="p">);</span>
+        <span class="nx">wp_enqueue_style</span><span class="p">(</span><span class="s1">&#39;styles&#39;</span><span class="p">,</span> <span class="nx">get_template_directory_uri</span><span class="p">()</span> <span class="o">.</span> <span class="s1">&#39;/style.css&#39;</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">wp_enqueue_style</span><span class="p">(</span><span class="s1">&#39;release&#39;</span><span class="p">,</span> <span class="nv">$path</span> <span class="o">.</span> <span class="s1">&#39;/release.css&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span><span class="p">(</span> <span class="o">!</span> <span class="nx">locate_template</span><span class="p">(</span><span class="s1">&#39;dist/release.js&#39;</span><span class="p">))</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+</div>
+<p>Include vendor js</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">wp_enqueue_script</span><span class="p">(</span><span class="s1">&#39;vendor&#39;</span><span class="p">,</span> <span class="nv">$path</span> <span class="o">.</span> <span class="s1">&#39;/vendor.js&#39;</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+</div>
+<p>Include theme js</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">wp_enqueue_script</span><span class="p">(</span><span class="s1">&#39;main&#39;</span><span class="p">,</span> <span class="nv">$path</span> <span class="o">.</span> <span class="s1">&#39;/main.js&#39;</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">wp_enqueue_script</span><span class="p">(</span><span class="s1">&#39;release&#39;</span><span class="p">,</span> <span class="nv">$path</span> <span class="o">.</span> <span class="s1">&#39;/release.js&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="nx">add_action</span><span class="p">(</span><span class="s1">&#39;wp_enqueue_scripts&#39;</span><span class="p">,</span> <span class="s1">&#39;enqueue_scripts&#39;</span><span class="p">);</span>
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
+</div>
+<div class="dox">
+  <div class="summary"><p>|----------------------------------------------------------
+| Plugin Dependencies (powered by TGM Plugin Activation)
+|----------------------------------------------------------</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="k">function</span> <span class="nf">register_plugin_dependencies</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">global</span> <span class="nv">$plugin_dependencies</span><span class="p">;</span>
+
+    <span class="nx">tgmpa</span><span class="p">(</span><span class="nv">$plugin_dependencies</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="nx">add_action</span><span class="p">(</span><span class="s1">&#39;tgmpa_register&#39;</span><span class="p">,</span> <span class="s1">&#39;register_plugin_dependencies&#39;</span><span class="p">);</span>
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+</div>
+<div class="dox">
+  <div class="summary"><p>|----------------------------------------------------------
+| Theme setup
+|----------------------------------------------------------</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+
+<p>Bootstrap nav walker</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">add_action</span><span class="p">(</span><span class="s1">&#39;after_setup_theme&#39;</span><span class="p">,</span> <span class="s1">&#39;bootstrap_setup&#39;</span><span class="p">);</span>
+<span class="k">function</span> <span class="nf">theme_setup</span><span class="p">()</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+</div>
+<p>Content width</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="k">global</span> <span class="nv">$content_width</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span> <span class="o">!</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$content_width</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nv">$content_width</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>
+    <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+</div>
+<p>Theme support</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="k">global</span> <span class="nv">$theme_support</span><span class="p">;</span>
+    <span class="k">foreach</span><span class="p">(</span><span class="nv">$theme_support</span> <span class="k">as</span> <span class="nv">$feature</span> <span class="o">=&gt;</span> <span class="nv">$args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="nb">count</span><span class="p">(</span><span class="nv">$args</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">add_theme_support</span><span class="p">(</span><span class="nv">$feature</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">add_theme_support</span><span class="p">(</span><span class="nv">$feature</span><span class="p">,</span> <span class="nv">$args</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="nx">add_action</span><span class="p">(</span><span class="s1">&#39;after_setup_theme&#39;</span><span class="p">,</span> <span class="s1">&#39;theme_setup&#39;</span><span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

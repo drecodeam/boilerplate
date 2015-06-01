@@ -7,8 +7,8 @@
 /* jshint ignore:start */
 
 // TODO Add imgmin
-// TODO Add autoprefix
 // TODO Add brower sync
+// TODO Add php lint
 
 "use strict";
 
@@ -74,15 +74,16 @@ module.exports = function(grunt) {
         'shell': 'grunt-shell-spawn',
         'scsslint': 'grunt-scss-lint',
         'revision': 'grunt-git-revision',
-        'usebanner': 'grunt-banner'
+        'usebanner': 'grunt-banner',
+        'removelogging': 'grunt-remove-logging',
+        'autoprefixer': 'grunt-autoprefixer',
+        'imagemin': 'grunt-contrib-imagemin'
     });
 
     // Configure grunt
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         ftp: grunt.file.readJSON('.ftpsrv.json'),
-        banner: grunt.file.read('.banner'),
-
 
         /*
         |----------------------------------------------------------
@@ -98,7 +99,9 @@ module.exports = function(grunt) {
             php: {
                 files: [
                     '*.php',
-                    'templates/*.php'
+                    'templates/*.php',
+                    'libs/*.php',
+                    'libs/**/*.php'
                 ],
                 options: {
                     livereload: true
@@ -127,7 +130,7 @@ module.exports = function(grunt) {
                 files: [
                     'assets/sass/*.{scss,sass}'
                 ],
-                tasks: ['scsslint', 'sass']
+                tasks: ['scsslint', 'sass', 'autoprefixer']
             },
 
             // JS FILES
@@ -135,7 +138,7 @@ module.exports = function(grunt) {
                 files: [
                     'assets/javascripts/*.js'
                 ],
-                tasks: ['', 'concat:js', 'jshint']
+                tasks: ['concat:js', 'jshint']
             },
 
             // CSS FILES
@@ -143,7 +146,7 @@ module.exports = function(grunt) {
                 files: [
                     'style.css'
                 ],
-                tasks: ['csslint']
+                tasks: ['csslint', 'autoprefixer']
             },
 
             // LIVERELOAD
@@ -247,6 +250,13 @@ module.exports = function(grunt) {
             js: {
                 src: ['assets/javascripts/*.js'],
                 dest: 'tmp/assets/javascripts/main.js'
+            },
+            css_dist: {
+                options: {
+                    separator: grunt.util.linefeed + '/** -- Additional CSS -- **/' + grunt.util.linefeed
+                },
+                src: ['style.css', 'tmp/assets/stylesheets/additional.css'],
+                dest: 'dist/style.css'
             }
         },
 
@@ -267,10 +277,6 @@ module.exports = function(grunt) {
         |----------------------------------------------------------
         */
         clean: {
-            dist: {
-                src: ['dist/*.css', '!dist/vendor.css']
-            },
-
             tmp: {
                 src: [
                     '!tmp/.gitignore',
@@ -279,14 +285,18 @@ module.exports = function(grunt) {
                 ]
             },
 
-            nonreleasefiles: {
-                src: ['dist/*', '!dist/release.css', '!dist/release.js']
+            dist: {
+                src: [
+                    '!dist/.gitkeep',
+                    'dist/*'
+                ]
             }
         },
 
         copy: {
             dist: {
                 files: [{
+                    expand: true,
                     src: [
                         '*.php',
                         'templates/*.php',
@@ -295,11 +305,19 @@ module.exports = function(grunt) {
                         'license',
                         'screenshot.png',
                         'style.css',
-                        'assets/**/*',
                         'libs/**/*'
                     ],
                     dest: 'dist/',
-                    cwd: 'dist'
+                }, {
+                    expand: true,
+                    cwd: 'tmp/',
+                    src: [
+                        'assets/vendor/*',
+                        'assets/javascripts/*',
+                        'assets/images/*',
+                        'assets/fonts/*'
+                    ],
+                    dest: 'dist'
                 }]
             },
 
@@ -317,6 +335,14 @@ module.exports = function(grunt) {
                     src: ['*.*'],
                     dest: 'assets/fonts'
                 }]
+            },
+
+            docs: {
+                files: [{
+                    expand: true,
+                    src: ['docs/**/*'],
+                    dest: 'dist/'
+                }]
             }
         },
 
@@ -326,13 +352,12 @@ module.exports = function(grunt) {
         |----------------------------------------------------------
         */
         cssmin: {
-            release: {
+            dist: {
+                options: {
+                    keepSpecialComments: 1
+                },
                 files: {
-                    'dist/release.css': [
-                        'style.css',
-                        'dist/additional.css',
-                        'dist/vendor.css'
-                    ]
+                    'dist/style.css': ['dist/style.css']
                 }
             }
         },
@@ -347,15 +372,9 @@ module.exports = function(grunt) {
                 mangle: false
             },
 
-            release: {
+            dist: {
                 files: {
-                    'dist/release.js': ['dist/main.js', 'dist/vendor.js']
-                }
-            },
-
-            test: {
-                files: {
-                    'dist/release.js': ['dist/main.js']
+                    'dist/assets/javascripts/main.js': ['dist/assets/javascripts/main.js']
                 }
             }
         },
@@ -419,16 +438,7 @@ module.exports = function(grunt) {
                     banner: '/* <%= grunt.template.today("yyyy-mm-dd HH:ss") %> @ ' + themeData.name + ' v' + themeData.version + ' (<%= meta.revision %>) */'
                 },
                 files: {
-                    src: ['dist/*']
-                }
-            },
-            header: {
-                options: {
-                    position: 'top',
-                    banner: '<%= banner %>'
-                },
-                files: {
-                    src: ['dist/*']
+                    src: ['dist/style.css', 'dist/assets/javascripts/*.js']
                 }
             }
         },
@@ -444,24 +454,9 @@ module.exports = function(grunt) {
                 options: {
                     archive: themeData.name + '-' + themeData.version + '.zip'
                 },
-                files: [
-                    {
-                        src: [
-                            'assets/images/*',
-                            'assets/fonts/*',
-                            'assets/vendor/*'
-                        ]
-                    },
-                    {
-                        src: ['dist/*']
-                    },
-                    {
-                        src: ['*.php', '*.css', '*.md', '*.txt', '*.png']
-                    },
-                    {
-                        src: ['libs/*/*', 'libs/*.php']
-                    }
-                ]
+                expand: true,
+                cwd: 'dist',
+                src: ['**']
             }
         },
 
@@ -472,13 +467,9 @@ module.exports = function(grunt) {
         */
         parker: {
             options: {
-                file: "parker.md"
+                file: 'dist/parker.md'
             },
-            src: [
-                'dist/*.css',
-                '*.css',
-                '!dist/vendor.css'
-            ]
+            src: ['dist/style.css']
         },
 
         docker: {
@@ -488,6 +479,40 @@ module.exports = function(grunt) {
                     '*.php'
                 ],
                 dest: 'docs'
+            }
+        },
+
+        removelogging: {
+            dist: {
+                src: 'dist/assets/javascripts/main.js',
+                dest: 'dist/assets/javascripts/main.js'
+            }
+        },
+
+        autoprefixer: {
+            dev: {
+                src: 'style.css',
+                dest: 'style.css'
+            },
+
+            sass: {
+                src: 'tmp/assets/stylesheets/additional.css'
+            }
+        },
+
+        imagemin: {
+            dev: {
+                options: {
+                    optimizationLevel: 7,
+                    progressive: true,
+                    interlaced: true
+                },
+                files: [{
+                    expand: true,
+                    cwd: 'assets/images',
+                    src: ['**/*.{png,jpg,gif}'],
+                    dest: 'tmp/assets/images'
+                }]
             }
         }
     });
@@ -505,6 +530,11 @@ module.exports = function(grunt) {
     | Tasks
     |----------------------------------------------------------
     */
+
+    grunt.registerTask('minify', [
+        'cssmin:dist',
+        'uglify:dist'
+    ]);
 
     grunt.registerTask('init', [
         'clean:tmp',
@@ -526,7 +556,7 @@ module.exports = function(grunt) {
     // This task is mainly for distributing the theme on WordPress.org. It
     // doesn't run any build task before compressing, this has to be done
     // manually (for now).
-    grunt.registerTask('zip', ['addbanner', 'compress']);
+    grunt.registerTask('zip', ['compress']);
 
     // ### Add a banner at the bottom of compiled files in <date>@<revision> format
     //
@@ -534,36 +564,7 @@ module.exports = function(grunt) {
     // call this task.
     grunt.registerTask('addbanner', [
         'revision',
-        'usebanner:header',
         'usebanner:compiled'
-    ]);
-
-    // ### Build the theme
-    //
-    // Calls a bunch of tasks to build the theme:
-    // 1. Clean directories (tmp, dir)
-    // 2. Install bower dependencies
-    // 3. Lint CSS (style.css)
-    // 4. Lint and compile SASS
-    // 5. Lint and concat JS
-    // 6. Clean tmp directory
-    var buildTasks = [];
-    buildTasks.push('watch');
-    grunt.registerTask('build', buildTasks);
-
-    // ### Build a release version of the theme
-    //
-    // This task automatically builds the theme and:
-    // 1. Minify ALL css files
-    // 2. Minify ALL js files
-    // 3. Clean "non release files" (non minified files)
-    // 4. Add release and header banner to files
-    grunt.registerTask('release', [
-        'build',
-        'cssmin',
-        'uglify:release',
-        'clean:nonreleasefiles',
-        'addbanner'
     ]);
 
     // ### Validation
@@ -574,6 +575,43 @@ module.exports = function(grunt) {
         'scsslint',
         'jshint'
     ]);
+
+    // ### Build the theme
+    var buildTasks = [];
+
+    buildTasks.push('init');
+    if( ! grunt.option('init')) {
+        buildTasks.shift();
+
+        buildTasks.push('validate');
+        buildTasks.push('clean:dist');
+    }
+
+    buildTasks.push('clean:dist');
+    buildTasks.push('copy:dist');
+    buildTasks.push('concat:css_dist');
+    buildTasks.push('autoprefixer');
+    buildTasks.push('removelogging');
+
+    // WordPress.org doesn't allow minified styles or js files.
+    if(grunt.option('minify')) {
+        buildTasks.push('cssmin:dist');
+        buildTasks.push('uglify:dist');
+    }
+
+    if(grunt.option('docs')) {
+        buildTasks.push('parker');
+        buildTasks.push('docker');
+        buildTasks.push('copy:docs');
+    }
+
+    buildTasks.push('addbanner');
+
+    if(grunt.option('zip')) {
+        buildTasks.push('compress');
+    }
+
+    grunt.registerTask('build', buildTasks);
 
     // ### Default
     //

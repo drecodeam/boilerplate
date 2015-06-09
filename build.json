@@ -1,0 +1,64 @@
+{
+    "options": {
+        "browser_sync": {
+            "watchTask": true,
+            "proxy": "localhost"
+        },
+        "imagemin": {
+            "optimizationLevel": 7,
+            "progressive": true,
+            "interlaced": true
+        },
+        "csslint": {
+            "important":            true,
+            "adjoining-classes":    false,
+            "box-sizing":           false
+        },
+        "scsslint": {
+            "linters": {
+                "BangFormat": {
+                    "enabled": true,
+                    "space_before_bang": true,
+                    "space_after_bang": true
+                },
+                "Indentation": {
+                    "enabled":                      true,
+                    "allow_non_nested_indentation": false,
+                    "character":                    "space",
+                    "width":                        4
+                }
+            }
+        },
+        "jshint": {
+            "camelcase": true,
+            "curly":    true,
+            "eqeqeq":   true,
+            "indent":   4,
+            "strict":   true,
+            "undef":    true
+        },
+        "ftp": {
+            "live": {
+                "host": "",
+                "port": 21,
+                "username": "",
+                "password": ""
+            },
+
+            "staging": {
+                "host": "",
+                "port": 21,
+                "username": "",
+                "password": ""
+            },
+            "exclude": [
+                ".sass-cache", ".git", "bower_components", "node_modules", ".csslintrc",
+                ".ftpsrv.json", ".gitignore", ".jshintrc", ".scss-lint.yml",
+                "bower.json", "readme.md", "Gruntfile.js", ".DS_Store", "._*",
+                "Spotlight-V100", ".Trashes", "Thumbs.db", "npm-debug.log", ".settings",
+                "nbproject", "package.json", "assets/stylesheets", "assets/tmp",
+                "assets/javascripts", ".banner"
+            ]
+        }
+    }
+}

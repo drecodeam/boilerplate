@@ -27,15 +27,21 @@ require_once 'libs/vendor/TGMPluginActivation.php';
 | Scripts und stylesheets
 |----------------------------------------------------------
 */
-function asset_path($dir = '') {
+function asset_path($dir = '', $ts = true) {
     $path = '/';
-    if(locate_template('tmp')) {
-        $path .= 'tmp/';
+    if(locate_template('.tmp')) {
+        $path .= '.tmp/';
     }
     $path .= 'assets/';
-    $path .= $dir . '/';
+    $path .= $dir;
+
+    $path .= ($ts ? '/': '');
 
     return $path;
+}
+
+function image_path() {
+    return get_template_directory_uri() . asset_path('images', false);
 }
 
 function enqueue_scripts() {

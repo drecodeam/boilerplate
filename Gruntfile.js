@@ -12,21 +12,9 @@
 
 "use strict";
 
-// Global configurations
-// TODO Add more configurations.
-var config = {
-    ftp_exclusion : [
-        '.sass-cache', '.git', 'bower_components', 'node_modules', '.csslintrc',
-        '.ftpsrv.json', '.gitignore', '.jshintrc', '.scss-lint.yml',
-        'bower.json', 'readme.md', 'Gruntfile.js', '.DS_Store', '._*',
-        'Spotlight-V100', '.Trashes', 'Thumbs.db', 'npm-debug.log', '.settings',
-        'nbproject', 'package.json', 'assets/stylesheets', 'assets/tmp',
-        'assets/javascripts', '.banner'
-    ]
-}
-
 // Needed for NodeJS
-var path        = require('path');
+var path        = require('path')
+,   YAML        = require('yamljs');
 
 module.exports = function(grunt) {
     // ### Get theme information
@@ -81,10 +69,29 @@ module.exports = function(grunt) {
         'browserSync'   : 'grunt-browser-sync'
     });
 
+
+    var validation = (grunt.option('live-validation') ? true : false);
+    var watchTasks = {
+        sass:   [],
+        css:    [],
+        js:     []
+    };
+
+    if(validation) {
+        watchTasks.sass = ['scsslint', 'sass', 'autoprefixer'];
+        watchTasks.css  = ['csslint', 'autoprefixer'];
+        watchTasks.js   = ['concat:js', 'jshint'];
+    } else {
+        watchTasks.sass = ['sass', 'autoprefixer'];
+        watchTasks.css  = ['autoprefixer'];
+        watchTasks.js   = ['concat:js'];
+    }
+
+    var build = grunt.file.readJSON('build.json');
+
     // Configure grunt
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        ftp: grunt.file.readJSON('.ftpsrv.json'),
 
         browserSync: {
             dev: {
@@ -95,16 +102,13 @@ module.exports = function(grunt) {
                         'libs/*.php',
                         'libs/**/*.php',
 
-                        'tmp/**/*.css',
-                        'tmp/**/*.js',
+                        '.tmp/**/*.css',
+                        '.tmp/**/*.js',
 
                         'style.css'
                     ]
                 },
-                options: {
-                    watchTask: true,
-                    proxy: "http://nehalem/wordpress"
-                }
+                options: build.options.browser_sync
             }
         },
 
@@ -125,10 +129,7 @@ module.exports = function(grunt) {
                     'templates/*.php',
                     'libs/*.php',
                     'libs/**/*.php'
-                ],
-                options: {
-                    //livereload: true
-                }
+                ]
             },
 
             // BOWER COMPONENTS
@@ -144,7 +145,7 @@ module.exports = function(grunt) {
                 files: [
                     'assets/sass/*.{scss,sass}'
                 ],
-                tasks: ['scsslint', 'sass', 'autoprefixer']
+                tasks: watchTasks.sass
             },
 
             // JS FILES
@@ -152,7 +153,7 @@ module.exports = function(grunt) {
                 files: [
                     'assets/javascripts/*.js'
                 ],
-                tasks: ['concat:js', 'jshint']
+                tasks: watchTasks.js
             },
 
             // CSS FILES
@@ -160,7 +161,17 @@ module.exports = function(grunt) {
                 files: [
                     'style.css'
                 ],
-                tasks: ['csslint', 'autoprefixer'],
+                tasks: watchTasks.css,
+                options: {
+                    spawn: false
+                }
+            },
+
+            images: {
+                files: [
+                    'assets/images/*.{png,jpg,gif}'
+                ],
+                tasks: ['imagemin'],
                 options: {
                     spawn: false
                 }
@@ -192,8 +203,8 @@ module.exports = function(grunt) {
         // Concatenation of bower components
         bower_concat: {
             all: {
-                dest: 'tmp/assets/vendor/vendor.js',
-                cssDest: 'tmp/assets/vendor/vendor.css'
+                dest: '.tmp/assets/vendor/vendor.js',
+                cssDest: '.tmp/assets/vendor/vendor.css'
             }
         },
 
@@ -212,7 +223,7 @@ module.exports = function(grunt) {
                     sourcemap: 'none'
                 },
                 files: {
-                    'tmp/assets/stylesheets/additional.css': 'assets/sass/base.scss'
+                    '.tmp/assets/stylesheets/additional.css': 'assets/sass/base.scss'
                 }
             }
         },
@@ -224,6 +235,7 @@ module.exports = function(grunt) {
         |----------------------------------------------------------
         */
         scsslint: {
+            options: YAML.stringify(build.scsslint_options),
             allFiles: [
                 'assets/sass/*.{scss,sass}'
             ]
@@ -237,10 +249,7 @@ module.exports = function(grunt) {
         */
         csslint: {
             dist: {
-                options: {
-                    csslintrc: '.csslintrc'
-                },
-
+                options: build.csslint_options,
                 src: ['style.css']
             }
         },
@@ -254,13 +263,13 @@ module.exports = function(grunt) {
         concat: {
             js: {
                 src: ['assets/javascripts/*.js'],
-                dest: 'tmp/assets/javascripts/main.js'
+                dest: '.tmp/assets/javascripts/main.js'
             },
             css_dist: {
                 options: {
                     separator: grunt.util.linefeed + '/** -- Additional CSS -- **/' + grunt.util.linefeed
                 },
-                src: ['style.css', 'tmp/assets/stylesheets/additional.css'],
+                src: ['style.css', '.tmp/assets/stylesheets/additional.css'],
                 dest: 'dist/style.css'
             }
         },
@@ -272,7 +281,8 @@ module.exports = function(grunt) {
         |----------------------------------------------------------
         */
         jshint: {
-            dist: ['tmp/assets/javascripts/main.js']
+            options: build.jshint_options,
+            dist: ['.tmp/assets/javascripts/main.js']
         },
 
 
@@ -284,9 +294,9 @@ module.exports = function(grunt) {
         clean: {
             tmp: {
                 src: [
-                    '!tmp/.gitignore',
-                    'tmp/assets/*',
-                    'tmp/*'
+                    '!.tmp/.gitignore',
+                    '.tmp/assets/*',
+                    '.tmp/*'
                 ]
             },
 
@@ -315,7 +325,7 @@ module.exports = function(grunt) {
                     dest: 'dist/',
                 }, {
                     expand: true,
-                    cwd: 'tmp/',
+                    cwd: '.tmp/',
                     src: [
                         'assets/vendor/*',
                         'assets/javascripts/*',
@@ -392,26 +402,26 @@ module.exports = function(grunt) {
         'ftp-deploy': {
             live: {
                 auth: {
-                    host: '<%= ftp.live.host %>',
-                    port: '<%= ftp.live.port %>',
-                    username: "<%= ftp.live.username %>",
-                    password: "<%= ftp.live.password %>"
+                    host: '<%= build.options.ftp.live.host %>',
+                    port: '<%= build.options.ftp.live.port %>',
+                    username: "<%= build.options.ftp.live.username %>",
+                    password: "<%= build.options.ftp.live.password %>"
                 },
                 src: './',
                 dest: './',
-                exclusions: config.ftp_exlusion
+                exclusions: build.options.ftp.exclude
             },
 
             staging: {
                 auth: {
-                    host: '<%= ftp.staging.host %>',
-                    port: '<%= ftp.staging.port %>',
-                    username: "<%= ftp.staging.username %>",
-                    password: "<%= ftp.staging.password %>"
+                    host: '<%= build.options.ftp.staging.host %>',
+                    port: '<%= build.options.ftp.staging.port %>',
+                    username: "<%= build.options.ftp.staging.username %>",
+                    password: "<%= build.options.ftp.staging.password %>"
                 },
                 src: './',
                 dest: './',
-                exclusions: config.ftp_exclusion
+                exclusions: build.options.ftp.exclude
             }
         },
 
@@ -501,22 +511,18 @@ module.exports = function(grunt) {
             },
 
             sass: {
-                src: 'tmp/assets/stylesheets/additional.css'
+                src: '.tmp/assets/stylesheets/additional.css'
             }
         },
 
         imagemin: {
             dev: {
-                options: {
-                    optimizationLevel: 7,
-                    progressive: true,
-                    interlaced: true
-                },
+                options: build.options.imagemin,
                 files: [{
                     expand: true,
                     cwd: 'assets/images',
                     src: ['**/*.{png,jpg,gif}'],
-                    dest: 'tmp/assets/images'
+                    dest: '.tmp/assets/images'
                 }]
             }
         }
@@ -542,7 +548,7 @@ module.exports = function(grunt) {
     ]);
 
     grunt.registerTask('init', [
-        'clean:tmp',
+        'clean:.tmp',
 
         'shell:bower_prune',
         'shell:bower',

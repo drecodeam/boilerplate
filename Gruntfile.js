@@ -71,19 +71,42 @@ module.exports = function(grunt) {
 
     // Load all avaiable grunt tasks
     require('jit-grunt')(grunt, {
-        'shell': 'grunt-shell-spawn',
-        'scsslint': 'grunt-scss-lint',
-        'revision': 'grunt-git-revision',
-        'usebanner': 'grunt-banner',
-        'removelogging': 'grunt-remove-logging',
-        'autoprefixer': 'grunt-autoprefixer',
-        'imagemin': 'grunt-contrib-imagemin'
+        'shell'         : 'grunt-shell-spawn',
+        'scsslint'      : 'grunt-scss-lint',
+        'revision'      : 'grunt-git-revision',
+        'usebanner'     : 'grunt-banner',
+        'removelogging' : 'grunt-remove-logging',
+        'autoprefixer'  : 'grunt-autoprefixer',
+        'imagemin'      : 'grunt-contrib-imagemin',
+        'browserSync'   : 'grunt-browser-sync'
     });
 
     // Configure grunt
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         ftp: grunt.file.readJSON('.ftpsrv.json'),
+
+        browserSync: {
+            dev: {
+                bsFiles: {
+                    src: [
+                        '*.php',
+                        'templates/*.php',
+                        'libs/*.php',
+                        'libs/**/*.php',
+
+                        'tmp/**/*.css',
+                        'tmp/**/*.js',
+
+                        'style.css'
+                    ]
+                },
+                options: {
+                    watchTask: true,
+                    proxy: "http://nehalem/wordpress"
+                }
+            }
+        },
 
         /*
         |----------------------------------------------------------
@@ -104,17 +127,8 @@ module.exports = function(grunt) {
                     'libs/**/*.php'
                 ],
                 options: {
-                    livereload: true
+                    //livereload: true
                 }
-            },
-
-            // BUILD FILES
-            build_files: {
-                files: [
-                    'Gruntfile.js',
-                    'package.json'
-                ],
-                tasks: ['default']
             },
 
             // BOWER COMPONENTS
@@ -146,18 +160,9 @@ module.exports = function(grunt) {
                 files: [
                     'style.css'
                 ],
-                tasks: ['csslint', 'autoprefixer']
-            },
-
-            // LIVERELOAD
-            livereload: {
-                files: [
-                    'tmp/*.css',
-                    'tmp/*.js',
-                    'style.css'
-                ],
+                tasks: ['csslint', 'autoprefixer'],
                 options: {
-                    livereload: true
+                    spawn: false
                 }
             }
         },
@@ -617,6 +622,7 @@ module.exports = function(grunt) {
     //
     // Builds the theme and watches for changes
     grunt.registerTask('default', [
+        'browserSync',
         'watch'
     ]);
 }

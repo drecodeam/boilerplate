@@ -6,10 +6,6 @@
 
 /* jshint ignore:start */
 
-// TODO Add imgmin
-// TODO Add brower sync
-// TODO Add php lint
-
 "use strict";
 
 // Needed for NodeJS
@@ -87,7 +83,7 @@ module.exports = function(grunt) {
         watchTasks.js   = ['concat:js'];
     }
 
-    var build = grunt.file.readJSON('build.json');
+    var build = grunt.file.readJSON('manifest.json');
 
     // Configure grunt
     grunt.initConfig({
@@ -122,22 +118,12 @@ module.exports = function(grunt) {
         |
         */
         watch: {
-            // PHP Files
-            php: {
-                files: [
-                    '*.php',
-                    'templates/*.php',
-                    'libs/*.php',
-                    'libs/**/*.php'
-                ]
-            },
-
             // BOWER COMPONENTS
             bower_components: {
                 files: [
                     'bower.json'
                 ],
-                tasks: ['shell:bower_prune', 'shell:bower', 'bower_concat']
+                tasks: ['shell:bower', 'bower_concat']
             },
 
             // SASS
@@ -174,6 +160,17 @@ module.exports = function(grunt) {
                 tasks: ['imagemin'],
                 options: {
                     spawn: false
+                }
+            },
+
+            // build
+            build: {
+                files: [
+                    'Gruntfile.js',
+                    'manifest.json'
+                ],
+                options: {
+                    reload: true
                 }
             }
         },

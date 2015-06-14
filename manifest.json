@@ -1,13 +1,13 @@
 {
     "options": {
         "browser_sync": {
-            "watchTask": true,
-            "proxy": "localhost"
+            "watchTask":    true,
+            "proxy":        "localhost"
         },
         "imagemin": {
-            "optimizationLevel": 7,
-            "progressive": true,
-            "interlaced": true
+            "optimizationLevel":    7,
+            "progressive":          true,
+            "interlaced":           true
         },
         "csslint": {
             "important":            true,
@@ -17,9 +17,9 @@
         "scsslint": {
             "linters": {
                 "BangFormat": {
-                    "enabled": true,
-                    "space_before_bang": true,
-                    "space_after_bang": true
+                    "enabled":              true,
+                    "space_before_bang":    true,
+                    "space_after_bang":     true
                 },
                 "Indentation": {
                     "enabled":                      true,
@@ -39,15 +39,15 @@
         },
         "ftp": {
             "live": {
-                "host": "",
-                "port": 21,
+                "host":     "",
+                "port":     21,
                 "username": "",
                 "password": ""
             },
 
             "staging": {
-                "host": "",
-                "port": 21,
+                "host":     "",
+                "port":     21,
                 "username": "",
                 "password": ""
             },

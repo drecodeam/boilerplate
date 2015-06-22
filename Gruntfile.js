@@ -74,11 +74,11 @@ module.exports = function(grunt) {
     };
 
     if(validation) {
-        watchTasks.sass = ['scsslint', 'sass', 'autoprefixer'];
-        watchTasks.css  = ['csslint', 'autoprefixer'];
+        watchTasks.sass = ['scsslint', 'sass'];
+        watchTasks.css  = ['csslint'];
         watchTasks.js   = ['concat:js', 'jshint'];
     } else {
-        watchTasks.sass = ['sass', 'autoprefixer'];
+        watchTasks.sass = ['sass'];
         watchTasks.css  = ['autoprefixer'];
         watchTasks.js   = ['concat:js'];
     }
@@ -347,14 +347,6 @@ module.exports = function(grunt) {
                     src: ['*.*'],
                     dest: 'assets/fonts'
                 }]
-            },
-
-            docs: {
-                files: [{
-                    expand: true,
-                    src: ['docs/**/*'],
-                    dest: 'dist/'
-                }]
             }
         },
 
@@ -484,16 +476,6 @@ module.exports = function(grunt) {
             src: ['dist/style.css']
         },
 
-        docker: {
-            app: {
-                src: [
-                    'assets/**/*',
-                    '*.php'
-                ],
-                dest: 'docs'
-            }
-        },
-
         removelogging: {
             dist: {
                 src: 'dist/assets/javascripts/main.js',
@@ -502,13 +484,9 @@ module.exports = function(grunt) {
         },
 
         autoprefixer: {
-            dev: {
-                src: 'style.css',
-                dest: 'style.css'
-            },
-
-            sass: {
-                src: '.tmp/assets/stylesheets/additional.css'
+            dist: {
+                src: 'dist/style.css',
+                dest: 'dist/style.css'
             }
         },
 
@@ -545,7 +523,7 @@ module.exports = function(grunt) {
     ]);
 
     grunt.registerTask('init', [
-        'clean:.tmp',
+        'clean:tmp',
 
         'shell:bower_prune',
         'shell:bower',
@@ -607,10 +585,8 @@ module.exports = function(grunt) {
         buildTasks.push('uglify:dist');
     }
 
-    if(grunt.option('docs')) {
+    if(grunt.option('parker')) {
         buildTasks.push('parker');
-        buildTasks.push('docker');
-        buildTasks.push('copy:docs');
     }
 
     buildTasks.push('addbanner');

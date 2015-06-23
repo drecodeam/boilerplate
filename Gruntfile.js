@@ -50,6 +50,10 @@ module.exports = function(grunt) {
         }
     }
 
+    // Fix for multiple grunt options
+    // See https://github.com/gruntjs/grunt/issues/908
+    require('nopt-grunt-fix')(grunt);
+
     // Enable time tracking for tasks
     require('time-grunt')(grunt);
 
@@ -62,7 +66,8 @@ module.exports = function(grunt) {
         'removelogging' : 'grunt-remove-logging',
         'autoprefixer'  : 'grunt-autoprefixer',
         'imagemin'      : 'grunt-contrib-imagemin',
-        'browserSync'   : 'grunt-browser-sync'
+        'browserSync'   : 'grunt-browser-sync',
+        'makepot'       : 'grunt-wp-i18n'
     });
 
 
@@ -131,7 +136,10 @@ module.exports = function(grunt) {
                 files: [
                     'assets/sass/*.{scss,sass}'
                 ],
-                tasks: watchTasks.sass
+                tasks: watchTasks.sass,
+                options: {
+                    spawn: false
+                }
             },
 
             // JS FILES
@@ -171,6 +179,18 @@ module.exports = function(grunt) {
                 ],
                 options: {
                     reload: true
+                }
+            }
+        },
+
+
+        makepot: {
+            target: {
+                options: {
+                    include: [
+                        '*.php'
+                    ],
+                    type: 'wp-theme'
                 }
             }
         },
@@ -391,26 +411,26 @@ module.exports = function(grunt) {
         'ftp-deploy': {
             live: {
                 auth: {
-                    host: '<%= build.options.ftp.live.host %>',
-                    port: '<%= build.options.ftp.live.port %>',
-                    username: "<%= build.options.ftp.live.username %>",
-                    password: "<%= build.options.ftp.live.password %>"
+                    host:       build.options.ftp.live.host,
+                    port:       build.options.ftp.live.port,
+                    username:   build.options.ftp.live.username,
+                    password:   build.options.ftp.live.password
                 },
-                src: './',
-                dest: './',
-                exclusions: build.options.ftp.exclude
+                src:            build.options.ftp.live.src,
+                dest:           build.options.ftp.live.dest + '/' + themeData.name.toLowerCase(),
+                exclusions:     build.options.ftp.exclude
             },
 
             staging: {
                 auth: {
-                    host: '<%= build.options.ftp.staging.host %>',
-                    port: '<%= build.options.ftp.staging.port %>',
-                    username: "<%= build.options.ftp.staging.username %>",
-                    password: "<%= build.options.ftp.staging.password %>"
+                    host:       build.options.ftp.staging.host,
+                    port:       build.options.ftp.staging.port,
+                    username:   build.options.ftp.staging.username,
+                    password:   build.options.ftp.staging.password
                 },
-                src: './',
-                dest: './',
-                exclusions: build.options.ftp.exclude
+                src:            build.options.ftp.staging.src,
+                dest:           build.options.ftp.staging.dest + '/' + themeData.name.toLowerCase(),
+                exclusions:     build.options.ftp.exclude
             }
         },
 
@@ -542,7 +562,7 @@ module.exports = function(grunt) {
     // This task is mainly for distributing the theme on WordPress.org. It
     // doesn't run any build task before compressing, this has to be done
     // manually (for now).
-    grunt.registerTask('zip', ['compress']);
+    grunt.registerTask('zip', ['build', 'compress']);
 
     // ### Add a banner at the bottom of compiled files in <date>@<revision> format
     //
@@ -576,20 +596,31 @@ module.exports = function(grunt) {
     buildTasks.push('clean:dist');
     buildTasks.push('copy:dist');
     buildTasks.push('concat:css_dist');
-    buildTasks.push('autoprefixer');
-    buildTasks.push('removelogging');
 
-    // WordPress.org doesn't allow minified styles or js files.
+    if( ! grunt.option('keep-logging')) {
+        buildTasks.push('removelogging');
+    }
+
     if(grunt.option('minify')) {
         buildTasks.push('cssmin:dist');
         buildTasks.push('uglify:dist');
     }
+
+    buildTasks.push('autoprefixer');
 
     if(grunt.option('parker')) {
         buildTasks.push('parker');
     }
 
     buildTasks.push('addbanner');
+
+    if(grunt.option('deploy-stage')) {
+        buildTasks.push('ftp-deploy:staging');
+    }
+
+    if(grunt.option('deploy-live')) {
+        buildTasks.push('ftp-deploy:live');
+    }
 
     if(grunt.option('zip')) {
         buildTasks.push('compress');

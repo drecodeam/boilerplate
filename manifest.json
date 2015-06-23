@@ -42,14 +42,17 @@
                 "host":     "",
                 "port":     21,
                 "username": "",
-                "password": ""
+                "password": "",
+                "src":      "./dist",
+                "dest":     "./wp-content/themes"
             },
-
             "staging": {
                 "host":     "",
                 "port":     21,
                 "username": "",
-                "password": ""
+                "password": "",
+                "src":      "./dist",
+                "dest":     "./wp-content/themes"
             },
             "exclude": [
                 ".sass-cache", ".git", "bower_components", "node_modules", ".csslintrc",

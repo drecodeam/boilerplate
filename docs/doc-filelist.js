@@ -1,1 +1,0 @@
-var tree={"files":["404.php","assets/javascripts/main.js","assets/sass/base.scss","footer.php","frontpage.php","functions.php","header.php","index.php","page.php","searchform.php","single.php"],"dirs":{"assets":{"dirs":{"javascripts":{"files":["main.js"]},"sass":{"files":["base.scss"]}}}}};
